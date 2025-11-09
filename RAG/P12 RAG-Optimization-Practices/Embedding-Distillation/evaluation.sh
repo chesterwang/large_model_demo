@@ -3,7 +3,7 @@
 # --in_domain_dataset:  领域内测试集路径，用于评估模型在目标任务上的性能
 # --out_domain_dataset: 领域外测试集路径，用于评估模型的泛化能力和是否发生灾难性遗忘
 python evaluation.py \
-  --model_before BAAI/bge-m3 \
-  --model_after output/checkpoint-XXX \
-  --in_domain_dataset dataset_scidocs/test.jsonl \
-  --out_domain_dataset dataset_stackoverflowdupquestions/test.jsonl
+  --model_before /mnt/workspace/modelscope/BAAI/bge-m3 \
+  --model_after output/checkpoint-1 \
+  --in_domain_dataset data/dataset_scidocs/test.jsonl \
+  --out_domain_dataset data/dataset_stackoverflowdupquestions/test.jsonl

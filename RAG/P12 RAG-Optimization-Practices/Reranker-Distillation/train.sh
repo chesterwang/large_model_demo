@@ -1,8 +1,8 @@
 torchrun --nproc_per_node 1 train.py \
     --model_name_or_path /mnt/workspace/modelscope/BAAI/bge-reranker-v2-m3 \
-    --train_data ../data/train_distill_qwen3_8b_vLLMlogit_margin_sampled.jsonl \
-    --eval_data ../data/test_distill_qwen3_8b_vLLMlogit_margin_sampled.jsonl \
-    --output_dir ../data/reranker_output \
+    --train_data data/train_distill_qwen3_8b_vLLMlogit_margin_sampled.jsonl \
+    --eval_data data/test_distill_qwen3_8b_vLLMlogit_margin_sampled.jsonl \
+    --output_dir output \
     --max_length 4096 \
     --num_train_epochs 1 \
     --per_device_train_batch_size 16 \

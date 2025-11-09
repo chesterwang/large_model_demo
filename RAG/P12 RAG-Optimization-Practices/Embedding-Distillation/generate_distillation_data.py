@@ -3,6 +3,7 @@
 import json
 import torch
 from vllm import LLM
+from vllm.distributed.parallel_state import destroy_model_parallel
 import logging
 from tqdm import tqdm
 from itertools import product
@@ -41,7 +42,8 @@ def initialize_model(args: argparse.Namespace) -> LLM:
             model=args.teacher_model_path,
             trust_remote_code=True,
             task="embed",
-            tensor_parallel_size=args.tensor_parallel_size
+            tensor_parallel_size=args.tensor_parallel_size,
+            gpu_memory_utilization=0.95
         )
         logging.info("教师模型加载成功。")
         return model
@@ -157,6 +159,7 @@ def main():
         process_file(input_file, output_file, model, args)
         print("="*80)
 
+    destroy_model_parallel()
     logging.info("\n所有文件处理完毕。脚本执行结束。")
 
 

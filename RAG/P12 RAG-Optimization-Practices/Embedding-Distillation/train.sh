@@ -16,11 +16,11 @@
 # --bf16:                       启用 bf16 混合精度训练，可以加速训练并减少显存占用
 # --eval_strategy:              评估策略，"no" 表示训练期间不进行评估
 torchrun --nproc_per_node 1 train.py \
-    --student_model_name_or_path your_path_to/bge-m3 \
-    --train_dataset_path dataset_scidocs/validation_kldiv_distill.jsonl \
+    --student_model_name_or_path /mnt/workspace/modelscope/BAAI/bge-m3 \
+    --train_dataset_path data/dataset_scidocs/validation_kldiv_distill.jsonl \
     --output_dir output \
     --num_train_epochs 1 \
-    --per_device_train_batch_size 16 \
+    --per_device_train_batch_size 32 \
     --gradient_accumulation_steps 32 \
     --learning_rate 6e-5 \
     --warmup_ratio 0.02 \

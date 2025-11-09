@@ -210,3 +210,8 @@ __marimo__/
 
 # data
 data/
+output/
+
+# uv
+uv.lock
+.python-version
