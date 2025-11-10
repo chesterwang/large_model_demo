@@ -1,0 +1,19 @@
+[project]
+name = "rag-optimization-practices"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "datasets>=4.4.1",
+    "modelscope>=1.31.0",
+    "sentence-transformers>=5.1.2",
+    "torch>=2.8.0",
+    "transformers[torch]>=4.57.1",
+    "vllm>=0.11.0",
+]
+
+
+[[tool.uv.index]]
+url = "http://mirrors.aliyun.com/pypi/simple/"
+default = true
