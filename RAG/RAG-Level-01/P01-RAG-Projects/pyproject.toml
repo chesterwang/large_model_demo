@@ -28,5 +28,6 @@ dependencies = [
     "wikipedia>=1.4.0",
 ]
 [[tool.uv.index]]
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+url = "http://mirrors.aliyun.com/pypi/simple"
+#url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 default = true

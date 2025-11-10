@@ -22,5 +22,6 @@ dependencies = [
     "zhipuai>=2.1.5.20250825",
 ]
 [[tool.uv.index]]
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+url = "http://mirrors.aliyun.com/pypi/simple"
+#url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 default = true
