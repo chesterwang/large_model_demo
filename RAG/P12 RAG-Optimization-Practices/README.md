@@ -1,3 +1,7 @@
+
+# 运行
+在GPU服务器上运行该项目。
+
 # RAG 优化实践 (RAG Optimization Practices)
 <p align="center">
   <a href="https://pytorch.org/" target="_blank"> <img src="https://img.shields.io/badge/PyTorch-2.6-red.svg" alt="PyTorch Version"></a>
