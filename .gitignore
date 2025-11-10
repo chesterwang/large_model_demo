@@ -211,7 +211,10 @@ __marimo__/
 # data
 data/
 output/
+hybrid_Store/
 
 # uv
 uv.lock
 .python-version
+
+
