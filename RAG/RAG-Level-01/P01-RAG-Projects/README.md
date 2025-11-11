@@ -15,7 +15,7 @@
 streamlit run Project\ 01\ chatbot/app.py
 ```
 
-![alt text](Project 01 chatbot/image.png)
+![alt text](<Project 01 chatbot/image.png>)
 
 ```bash
 # 安装ollama
@@ -25,7 +25,7 @@ ollama pull deepseek-r1:1.5b
 streamlit run Project\ 01\ chatbot/local_llama.py
 ```
 
-![alt text](Project 01 chatbot/image-1.png)
+![alt text](<Project 01 chatbot/image-1.png>)
 
 ## Project 02 APIs（prompt模板和chat接口）
 
@@ -42,7 +42,7 @@ python Project\ 02\ APIs/app.py
 streamlit run Project\ 02\ APIs/client.py
 ```
 
-![image.png](Project 02 APIs/image.png)
+![image.png](<Project 02 APIs/image.png>)
 
 ## Project 03 RAG pipeline （RAG处理流水线）
 
@@ -54,7 +54,7 @@ streamlit run Project\ 02\ APIs/client.py
     5. 向量数据库FAISS
     6. 最终通过向量数据库接口做相似性性检索
 
-![image.png](Project 03 RAG pipeline/image.png)
+![image.png](<Project 03 RAG pipeline/image.png>)
 
 ## Project 04 Retriever and Chain （RAG检索处理链条）
 
