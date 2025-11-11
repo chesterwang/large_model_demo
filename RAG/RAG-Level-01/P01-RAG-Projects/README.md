@@ -70,6 +70,6 @@ streamlit run Project\ 02\ APIs/client.py
     4. **最终构建出 chain （向量数据库 | prompt | LLM）**
 
 
-![alt text](./Project\ 04\ Retriever\ and\ Chain/image.png)
+![alt text](<./Project 04 Retriever and Chain/image.png>)
 
 
