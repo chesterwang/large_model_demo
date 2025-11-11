@@ -13,7 +13,7 @@ def get_ollama_response(input_text):
 
 
 ## streamlit framework
-st.title('Langchain Demo with LLama-3 & OpneAI API')
+st.title('Langchain Demo with OLLama & OpneAI API')
 input_text1 = st.text_input("Write an assay on")
 input_text2 = st.text_input("Write an poem on")
 
