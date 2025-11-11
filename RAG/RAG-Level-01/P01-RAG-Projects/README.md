@@ -3,7 +3,7 @@
 
 使用uv来构建。
 
-## Project 01 chatbot
+## Project 01 chatbot （LLM模型调用方式）
 1. app.py
     1. langchain + openai sdk + kimi k2 的OpenAI兼容api
     2. 调用chain为 `ChatPromptTemplate | Kimi K2 LLM API | StrOutputParser`
@@ -27,7 +27,7 @@ streamlit run Project\ 01\ chatbot/local_llama.py
 
 ![alt text](Project 01 chatbot/image-1.png)
 
-## Project 02 APIs
+## Project 02 APIs（prompt模板和chat接口）
 
 1. app.py
     1. fastapi 包装两个模型
@@ -44,7 +44,7 @@ streamlit run Project\ 02\ APIs/client.py
 
 ![image.png](Project 02 APIs/image.png)
 
-## Project 03 RAG pipeline
+## Project 03 RAG pipeline （RAG处理流水线）
 
 1. 文档加载器 + splitter + embedding 服务 + 向量数据库
     1. langchain 文本加载器(textloader) + 网页加载器(webbaseloader) + pdf文件加载器(pypdfloader)
@@ -56,7 +56,7 @@ streamlit run Project\ 02\ APIs/client.py
 
 ![image.png](Project 03 RAG pipeline/image.png)
 
-## Project 04 Retriever and Chain
+## Project 04 Retriever and Chain （RAG检索处理链条）
 
 1. 文档加载器 + splitter + embedding 服务 + 向量数据库
     1. langchain 文本加载器(textloader) + 网页加载器(webbaseloader) + pdf文件加载器(pypdfloader)
@@ -70,8 +70,6 @@ streamlit run Project\ 02\ APIs/client.py
     4. **最终构建出 chain （向量数据库 | prompt | LLM）**
 
 
-
-
-![alt text](Project 04 Retriever and Chain/image.png)
+![alt text](./Project\ 04\ Retriever\ and\ Chain/image.png)
 
 
