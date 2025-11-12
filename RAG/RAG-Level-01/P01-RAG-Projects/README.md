@@ -1,4 +1,16 @@
 
+- [环境构建](#环境构建)
+- [Project 01 chatbot （LLM模型调用方式）](#project-01-chatbot-llm模型调用方式)
+- [Project 02 APIs（prompt模板和chat接口）](#project-02-apisprompt模板和chat接口)
+- [Project 03 RAG pipeline （RAG处理流水线）](#project-03-rag-pipeline-rag处理流水线)
+- [Project 04 Retriever and Chain （RAG检索处理链条）](#project-04-retriever-and-chain-rag检索处理链条)
+- [Project 05 Advanced RAG Q\&A Project （多类型文档QA RAG）](#project-05-advanced-rag-qa-project-多类型文档qa-rag)
+- [Project 06 Groq inference （Groq平台接口调用）](#project-06-groq-inference-groq平台接口调用)
+- [Project 07 Gen AI （检索搭配文本生成式接口）](#project-07-gen-ai-检索搭配文本生成式接口)
+- [Project 08 Powerful Doc Q\&A Chatbot （文档QA）](#project-08-powerful-doc-qa-chatbot-文档qa)
+- [Project 11 ImageEnhancer （文生图）](#project-11-imageenhancer-文生图)
+
+
 ## 环境构建
 
 使用uv来构建Python解释器环境。
