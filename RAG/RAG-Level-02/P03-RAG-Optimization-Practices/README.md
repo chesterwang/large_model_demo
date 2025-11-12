@@ -2,6 +2,37 @@
 # 运行
 在GPU服务器上运行该项目。
 
+依次运行
+
+**Reranker-Distillation**
+
+```bash
+#切换解释器
+source .venv/bin/activate
+```
+
+**Embedding-Distillation**
+
+```bash
+#切换解释器
+source .venv/bin/activate
+cd Embedding-Distillation
+# 1. 运行 prepare.ipynb
+
+# 2. 生成logitsdataview 
+bash generate_logits.sh
+
+# 3. 创建三元组训练数据
+bash create_triplets.sh
+
+# 4. 训练
+bash train.sh
+
+# 5. 评估
+bash evaluate.sh
+```
+
+
 # RAG 优化实践 (RAG Optimization Practices)
 <p align="center">
   <a href="https://pytorch.org/" target="_blank"> <img src="https://img.shields.io/badge/PyTorch-2.6-red.svg" alt="PyTorch Version"></a>
