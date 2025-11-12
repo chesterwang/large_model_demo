@@ -18,7 +18,7 @@ Python demo.py
 
 1. 在ChatModel的stream模式下，返回是一个词一个词的进行返回的。
 2. 在该demo示例中，检索到的文档是全被塞到一个system message下，然后后续的对话但就是根据此来进行交互。
-3. 模型文件下载若干问题
+3. **模型文件下载若干问题**
     1. bartowski/Llama-3.2-1B-Instruct-GGUF 这个模型中的instruct的意思
         1. instruct意思就是指模型是经过 在base model上经过指令微调（或者叫监督微调）过程之后产生的模型，可以直接用于聊天、助手类应用
     2. GGUF 文件包含了tokenizer的数据。
