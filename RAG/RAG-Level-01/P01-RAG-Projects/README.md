@@ -1,4 +1,8 @@
 
+本项目为若干RAG实践项目。
+
+**TOC**
+
 - [环境构建](#环境构建)
 - [Project 01 chatbot （LLM模型调用方式）](#project-01-chatbot-llm模型调用方式)
 - [Project 02 APIs（prompt模板和chat接口）](#project-02-apisprompt模板和chat接口)
