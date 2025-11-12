@@ -7,7 +7,7 @@ from langchain_ollama import OllamaEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_classic.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_classic.chains import create_retrieval_chain
+from langchain_classic.chains.retrieval import create_retrieval_chain
 from langchain_community.vectorstores import FAISS
 import time
 from dotenv import load_dotenv
@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 # 设置http的代理和不代理的地址
 os.environ['HTTP_PROXY'] = "http://127.0.0.1:7890"
 os.environ['HTTPS_PROXY'] = "http://127.0.0.1:7890"
-os.environ['NO_PROXY'] = "http://127.0.0.1:11434" #ollama的本地服务地址
+os.environ['NO_PROXY'] = "127.0.0.1,localhost" #ollama的本地服务地址
 
 # load the Groq API key
 groq_api_key=os.environ['GROQ_API_KEY']

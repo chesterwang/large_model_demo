@@ -21,7 +21,7 @@ import os
 # 设置http的代理和不代理的地址
 os.environ['HTTP_PROXY'] = "http://127.0.0.1:7890"
 os.environ['HTTPS_PROXY'] = "http://127.0.0.1:7890"
-os.environ['NO_PROXY'] = "http://127.0.0.1:11434"  # ollama的本地服务地址
+os.environ['NO_PROXY'] = "127.0.0.1,localhost" #ollama的本地服务地址
 
 ## load the GROQ API Key and OPENAI APY key
 os.environ['OPENAI_API_KEY'] = os.getenv('OPENAI_API_KEY')
@@ -62,7 +62,7 @@ def vector_embeddins():
 
         from langchain_huggingface import HuggingFaceEmbeddings
         st.session_state.embeddings = HuggingFaceEmbeddings(
-            model_name="BAAI/bge-small-en-v1.5",  # sentence-transformers/all-MiniLM-16-v2
+            model_name="BAAI/bge-large-zh-v1.5",  # sentence-transformers/all-MiniLM-16-v2
             model_kwargs={'device': 'cpu'},
             encode_kwargs={'normalize_embeddings': True}
         )
@@ -77,7 +77,7 @@ def vector_embeddins():
         st.session_state.final_documents = st.session_state.text_splitter.split_documents(
             st.session_state.docs)  ## splitting
         logger.info(f"final_documents length {len(st.session_state.final_documents)}")
-        st.session_state.vectors = FAISS.from_documents(st.session_state.final_documents,
+        st.session_state.vectors = FAISS.from_documents(st.session_state.final_documents[0:10],
                                                         st.session_state.embeddings)  ## vector store OpenAi embeddings
 
 
