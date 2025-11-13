@@ -112,7 +112,7 @@ simple_qa_prompt_tmpl = PromptTemplate(simple_qa_prompt_tmpl_str)  # norag
 
 # Build query_engine
 # 带上下文
-reranker_model_path="/mnt/workspace/modelscope/BAAI/bge-reranker-large",
+reranker_model_path="/mnt/workspace/modelscope/BAAI/bge-reranker-large"
 # model BAAI/bge-reranker-large
 rag_query_engine = build_query_engine(reranker_model_path, index, response_mode, qa_prompt_tmpl, with_hybrid_search, top_k,
                                       top_k_rerank, with_rerank, nodes)
