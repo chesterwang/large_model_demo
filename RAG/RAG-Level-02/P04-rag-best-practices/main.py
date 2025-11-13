@@ -31,6 +31,7 @@ warnings.filterwarnings('ignore')
 # 导入环境
 _ = load_dotenv(find_dotenv())
 config = dotenv_values(".env")
+MODELSCOPE_CACHE = os.environ['MODELSCOPE_CACHE']
 
 # 设置参数
 with_hyde = False  # 是否采用假设文档
@@ -74,11 +75,11 @@ else:
     Settings.embed_model = HuggingFaceEmbedding(
         # model_name="/mnt/workspace/modelscope/BAAI/bge-large-en-v1.5",
         model_name="BAAI/bge-large-en-v1.5",
-        cache_folder="/home/chester/.cache/huggingface/hub/",
+        cache_folder=MODELSCOPE_CACHE,
         embed_batch_size=128,
         local_files_only=True,  # 仅加载本地模型，不尝试下载
-        # device="cuda",
-        device="cpu",
+        device="cuda",
+        # device="cpu",
     )
 
 # 加载大模型
@@ -101,6 +102,7 @@ if with_hybrid_search:
     # 不再尝试了，qrant相关llama_index的关于模型下载的代码写得非常糟糕。
     index, nodes = load_hybrid_data(input_file=["data/testdata.txt"], persist_dir="hybrid_Store")
 else:
+    #这段代码内部会使用 Settings.embed_model 来对文本进行embedding
     index, nodes = load_txt_data(input_file=["data/testdata.txt"], persist_dir="hybrid_Store",
                                  with_sliding_window=with_sliding_window, chunk_size=512, chunk_overlap=128)
 

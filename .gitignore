@@ -217,4 +217,7 @@ hybrid_Store/
 uv.lock
 .python-version
 
+.env
+product.env
+dev.env
 
