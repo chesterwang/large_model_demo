@@ -1,10 +1,7 @@
 
-# 运行
-在GPU服务器上运行该项目。
-
-依次运行
-
 ## **Reranker-Distillation**
+
+运行过程如下
 
 ```bash
 #切换解释器
@@ -25,7 +22,51 @@ bash train.sh
 bash evaluate.sh
 ```
 
-生成logtis过程
+**Reranker distillation整体步骤**
+
+1. 说明
+    1. 模型本质就是cross-encoder，即将QA进行拼接，输入LLM进而得到相似度。
+2. generate_logits 生成59万条数据（训练集+测试集），运行时长（250min）。
+    1. 即针对  query 和doc 生成一个logprob分数，即 `(query, passage, score)`。
+    2. logprob分数利用了 prompt模板 + LLM的chat接口 进行打分。 prompt模板如下。
+        1. `Judge whether the Document meets the requirements based on the Query and the Instruct provided. Note that the answer can only be "yes" or "no". `
+        2. `<Instruct>: {instruction}\n<Query>: {query}\n<Document>: {doc}`
+        3. 其中 instruct变量为 `Given a web search query, retrieve relevant passages that answer the query`
+    3. prompt 限制了输出token的范围为 两个token （yes or no） 。
+    4. 推理使用 vLLM的sdk，加载本地模型文件。
+3. 三元组蒸馏数据（训练集+测试集）
+    1. 生成三元组蒸馏数据 `(query, positive passage, negative passage, logits_diff)`
+    2. 正样本为logits 最高top_k里抽样。
+    3. 负样本按照logits排序 每个正样本位置后面的样本。
+    4. 即两两组合，组合数量为 `n*(n-1)/2`
+    5. 并非使用该项目数据集真正的原始 ground-truth label。
+4. 训练
+    1. 利用 embedding小模型 + 三元组蒸馏数据 进行训练，将领域知识蒸馏进小模型。
+5. 评估
+    1. 对微调前的模型和微调后的模型利用测试集数据进行对比。
+
+```Python
+# prompt格式
+message = [
+    {"role": "system", "content": "Judge whether the Document meets the requirements based on the Query and the Instruct provided. Note that the answer can only be \"yes\" or \"no\"."},
+    {"role": "user", "content": f"<Instruct>: {instruction}\n<Query>: {query}\n<Document>: {doc}"}
+]
+
+#LLM采样参数，只允许 yes 和 no 选项的logpro输出。
+    # 定义固定的 token 和采样参数
+    true_token = tokenizer("yes", add_special_tokens=False).input_ids[0]
+    false_token = tokenizer("no", add_special_tokens=False).input_ids[0]
+    sampling_params = SamplingParams(
+        temperature=0,
+        max_tokens=1,
+        logprobs=20,
+        allowed_token_ids=[true_token, false_token],
+    )
+```
+
+执行过程
+
+
 ![alt text](Reranker-Distillation/image.png)
 
 
@@ -33,6 +74,48 @@ bash evaluate.sh
 
 
 ![alt text](Reranker-Distillation/image3.png)
+
+
+**reranker蒸馏评估结果**
+
+运行过程如下
+
+```bash
+# reranker 蒸馏训练之后的评估结果
+(rag-optimization-practices) root@dsw-1457330-845c588466-dwlc9:/mnt/workspace/large_model_demo/RAG/RAG-Level-02/P03-RAG-Optimization-Practices/Reranker-Distillation# bash evaluate.sh 
+正在从 data/test.jsonl 加载数据集...
+加载完成！共 2992 条样本。
+
+--- 正在加载并评估模型: /mnt/workspace/modelscope/BAAI/bge-reranker-v2-m3 ---
+--- 正在加载并评估模型: ./output/checkpoint-1217 ---
+==================================================
+✅ 最终评估结果汇总
+==================================================
+
+【蒸馏前】模型性能:
+  - MAP: 0.472061
+  - MRR@10: 0.478234
+  - NDCG@10: 0.547284
+
+【蒸馏后】模型性能:
+  - MAP: 0.564523
+  - MRR@10: 0.573106
+  - NDCG@10: 0.638634
+==================================================
+🚀 性能变化分析 (蒸馏后 vs. 蒸馏前)
+==================================================
+指标 [MAP]:
+  - 绝对提升: +0.092462
+  - 相对提升: +19.59% ↑
+指标 [MRR@10]:
+  - 绝对提升: +0.094872
+  - 相对提升: +19.84% ↑
+指标 [NDCG@10]:
+  - 绝对提升: +0.091349
+  - 相对提升: +16.69% ↑
+评估完成！✨
+```
+
 
 
 ## **Embedding-Distillation**
@@ -56,11 +139,24 @@ bash train.sh
 bash evaluate.sh
 ```
 
+**embedding 模型蒸馏过程**
+
+  1. 说明
+      1. 模型其实就是bi-encoder，即模型输出embedding，然后计算QA相似度。
+      2. [用KL散度将Qwen3-Embedding-8B向量大模型知识蒸馏给小模型BGE-m3 - 知乎](https://zhuanlan.zhihu.com/p/1933693856077026394)
+  2. generate_logits
+      1. 针对原始数据中每一行中的 一个query、多个positive文档、多个negative文档 分别输入 Qwen3-embedding模型，得到向量。
+      2. 针对数据形式 `（query，positiveDoc，[negativeDoc,negativeDoc2，...]）`，分别计算query和每个doc的余弦相似度，然后将 所有的相似度 视为一个概率分布。
+  3. train.sh
+      1. 对于学生模型同样产生一个概率分布，和老师模型的分布计算KL损失，进而训练学生模型。
+  4. 评估
+      1. 利用预留的测试集进行评估。
+
 
 ![alt text](Embedding-Distillation/image.png)
 
 
-
+**embedding蒸馏评估结果**
 
 ```Python
 (rag-optimization-practices) root@dsw-1457330-845c588466-dwlc9:/mnt/workspace/large_model_demo/RAG/RAG-Level-02/P03-RAG-Optimization-Practices/Embedding-Distillation# bash evaluation.sh 
@@ -127,82 +223,8 @@ ndcg@10         0.5902      0.5778     -0.0124       -2.10
 
 
 
-# 具体机制
-
-## reranker-Distillation
-
-1. 环境配置
-    1. A10 GPU（显存24G）
-2. 整体步骤
-    1. generate_logits 生成59万条数据，运行时长（250min）。
-        1. 即针对  query doc 生成一个logprob分数，即 `(query, passage, score)`。
-        2. logprob分数利用了 prompt模板 + LLM的chat接口 进行打分。
-        3. prompt 限制了输出token的范围为 两个token （yes or no） 。 prompt模板如下
-            1. `Judge whether the Document meets the requirements based on the Query and the Instruct provided. Note that the answer can only be "yes" or "no". `
-            2. `<Instruct>: {instruction}\n<Query>: {query}\n<Document>: {doc}`
-            3. 其中 instruct变量为 `Given a web search query, retrieve relevant passages that answer the query`
-    2. 三元组蒸馏数据
-        1. 生成三元组蒸馏数据 `(query, positive passage, negative passage, logits_diff)`
-    3. 训练
-        1. 利用 embedding小模型 + 三元组蒸馏数据 进行训练，将领域知识蒸馏进小模型。
-    4. 评估
 
 
-```Python
-# prompt格式
-message = [
-    {"role": "system", "content": "Judge whether the Document meets the requirements based on the Query and the Instruct provided. Note that the answer can only be \"yes\" or \"no\"."},
-    {"role": "user", "content": f"<Instruct>: {instruction}\n<Query>: {query}\n<Document>: {doc}"}
-]
-
-#LLM采样参数，只允许 yes 和 no 选项的logpro输出。
-    # 定义固定的 token 和采样参数
-    true_token = tokenizer("yes", add_special_tokens=False).input_ids[0]
-    false_token = tokenizer("no", add_special_tokens=False).input_ids[0]
-    sampling_params = SamplingParams(
-        temperature=0,
-        max_tokens=1,
-        logprobs=20,
-        allowed_token_ids=[true_token, false_token],
-    )
-```
-
-
-```bash
-# reranker 蒸馏训练之后的评估结果
-(rag-optimization-practices) root@dsw-1457330-845c588466-dwlc9:/mnt/workspace/large_model_demo/RAG/RAG-Level-02/P03-RAG-Optimization-Practices/Reranker-Distillation# bash evaluate.sh 
-正在从 data/test.jsonl 加载数据集...
-加载完成！共 2992 条样本。
-
---- 正在加载并评估模型: /mnt/workspace/modelscope/BAAI/bge-reranker-v2-m3 ---
---- 正在加载并评估模型: ./output/checkpoint-1217 ---
-==================================================
-✅ 最终评估结果汇总
-==================================================
-
-【蒸馏前】模型性能:
-  - MAP: 0.472061
-  - MRR@10: 0.478234
-  - NDCG@10: 0.547284
-
-【蒸馏后】模型性能:
-  - MAP: 0.564523
-  - MRR@10: 0.573106
-  - NDCG@10: 0.638634
-==================================================
-🚀 性能变化分析 (蒸馏后 vs. 蒸馏前)
-==================================================
-指标 [MAP]:
-  - 绝对提升: +0.092462
-  - 相对提升: +19.59% ↑
-指标 [MRR@10]:
-  - 绝对提升: +0.094872
-  - 相对提升: +19.84% ↑
-指标 [NDCG@10]:
-  - 绝对提升: +0.091349
-  - 相对提升: +16.69% ↑
-评估完成！✨
-```
 
 
 
