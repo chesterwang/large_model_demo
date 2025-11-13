@@ -15,7 +15,8 @@ from llama_index.core.postprocessor import LLMRerank
 from llama_index.postprocessor.flag_embedding_reranker import FlagEmbeddingReranker
 
 
-def build_query_engine(index: VectorStoreIndex,
+def build_query_engine(reranker_model_path,
+                       index: VectorStoreIndex,
                        response_mode: ResponseMode = ResponseMode.TREE_SUMMARIZE,
                        qa_prompt_tmpl: Optional[BasePromptTemplate] = None,
                        with_hybrid_search: bool = False,
@@ -25,7 +26,7 @@ def build_query_engine(index: VectorStoreIndex,
                        nodes: Optional[List[BaseNode]] = None):
     reranker = FlagEmbeddingReranker(
         top_n=top_k_rerank,
-        model="BAAI/bge-reranker-large",
+        model=reranker_model_path,
         use_fp16=True,
     )
     if with_hybrid_search:

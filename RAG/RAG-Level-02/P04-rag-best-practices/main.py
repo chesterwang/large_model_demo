@@ -73,9 +73,9 @@ if with_Finetuning_embedding:
                                   model_name="ft-bge-large-en-v1.5")
 else:
     Settings.embed_model = HuggingFaceEmbedding(
-        # model_name="/mnt/workspace/modelscope/BAAI/bge-large-en-v1.5",
-        model_name="BAAI/bge-large-en-v1.5",
-        cache_folder=MODELSCOPE_CACHE,
+        model_name="/mnt/workspace/modelscope/BAAI/bge-large-en-v1.5",
+        #model_name="BAAI/bge-large-en-v1.5",
+        #cache_folder=MODELSCOPE_CACHE,
         embed_batch_size=128,
         local_files_only=True,  # 仅加载本地模型，不尝试下载
         device="cuda",
@@ -112,7 +112,9 @@ simple_qa_prompt_tmpl = PromptTemplate(simple_qa_prompt_tmpl_str)  # norag
 
 # Build query_engine
 # 带上下文
-rag_query_engine = build_query_engine(index, response_mode, qa_prompt_tmpl, with_hybrid_search, top_k,
+reranker_model_path="/mnt/workspace/modelscope/BAAI/bge-reranker-large",
+# model BAAI/bge-reranker-large
+rag_query_engine = build_query_engine(reranker_model_path, index, response_mode, qa_prompt_tmpl, with_hybrid_search, top_k,
                                       top_k_rerank, with_rerank, nodes)
 # 不带上下文，即不从数据库从查找近似文档
 simple_query_engine = index.as_query_engine(similarity_top_k=top_k,
