@@ -101,8 +101,8 @@ Settings.llm = ChatGLM(
 )
 Settings.embed_model = HuggingFaceEmbedding(
     model_name="BAAI/bge-large-en-v1.5",
-    # cache_folder="./BAAI/",
-    cache_folder="/home/chester/.cache/huggingface/hub/",
+    # cache_folder="/home/chester/.cache/huggingface/hub/",
+    cache_folder="/mnt/workspace/modelscope/",
     embed_batch_size=128,
     local_files_only=True,  # 仅加载本地模型，不尝试下载
     # device="cuda",

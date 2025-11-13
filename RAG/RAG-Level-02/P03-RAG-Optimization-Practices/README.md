@@ -9,7 +9,31 @@
 ```bash
 #切换解释器
 source .venv/bin/activate
+cd Embedding-Distillation
+# 1. 运行 prepare.ipynb
+
+# 2. 生成logitsdataview 
+bash generate_logits.sh
+
+# 3. 创建三元组训练数据
+bash create_triplets.sh
+
+# 4. 训练
+bash train.sh
+
+# 5. 评估
+bash evaluate.sh
 ```
+
+生成logtis过程
+![alt text](Reranker-Distillation/image.png)
+
+
+![alt text](Reranker-Distillation/image2.png)
+
+
+![alt text](Reranker-Distillation/image3.png)
+
 
 **Embedding-Distillation**
 
@@ -31,6 +55,53 @@ bash train.sh
 # 5. 评估
 bash evaluate.sh
 ```
+
+
+![alt text](Embedding-Distillation/image.png)
+
+
+
+# 具体机制
+
+## reranker-Distillation
+
+1. 环境配置
+    1. A10 GPU（显存24G）
+2. 整体步骤
+    1. generate_logits 生成59万条数据，运行时长（250min）。
+        1. 即针对  query doc 生成一个logprob分数，即 `(query, passage, score)`。
+        2. logprob分数利用了 prompt模板 + LLM的chat接口 进行打分。
+        3. prompt 限制了输出token的范围为 两个token （yes or no） 。 prompt模板如下
+            1. `Judge whether the Document meets the requirements based on the Query and the Instruct provided. Note that the answer can only be "yes" or "no". `
+            2. `<Instruct>: {instruction}\n<Query>: {query}\n<Document>: {doc}`
+            3. 其中 instruct变量为 `Given a web search query, retrieve relevant passages that answer the query`
+    2. 三元组蒸馏数据
+        1. 生成三元组蒸馏数据 `(query, positive passage, negative passage, logits_diff)`
+    3. 训练
+        1. 利用 embedding小模型 + 三元组蒸馏数据 进行训练，将领域知识蒸馏进小模型。
+    4. 评估
+
+
+```Python
+# prompt格式
+message = [
+    {"role": "system", "content": "Judge whether the Document meets the requirements based on the Query and the Instruct provided. Note that the answer can only be \"yes\" or \"no\"."},
+    {"role": "user", "content": f"<Instruct>: {instruction}\n<Query>: {query}\n<Document>: {doc}"}
+]
+
+#LLM采样参数，只允许 yes 和 no 选项的logpro输出。
+    # 定义固定的 token 和采样参数
+    true_token = tokenizer("yes", add_special_tokens=False).input_ids[0]
+    false_token = tokenizer("no", add_special_tokens=False).input_ids[0]
+    sampling_params = SamplingParams(
+        temperature=0,
+        max_tokens=1,
+        logprobs=20,
+        allowed_token_ids=[true_token, false_token],
+    )
+```
+
+
 
 
 # RAG 优化实践 (RAG Optimization Practices)

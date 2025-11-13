@@ -1,16 +1,18 @@
 # 设置代理
 import os
-os.environ['HTTP_PROXY'] = "http://127.0.0.1:7890"
-os.environ['HTTPS_PROXY'] = "http://127.0.0.1:7890"
-os.environ['NO_PROXY'] = "http://127.0.0.1:11434" #ollama的本地服务地址
+#os.environ['HTTP_PROXY'] = "http://127.0.0.1:7890"
+#os.environ['HTTPS_PROXY'] = "http://127.0.0.1:7890"
+#os.environ['NO_PROXY'] = "http://127.0.0.1:11434" #ollama的本地服务地址
+
+import logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.llms.ollama import Ollama
 from llama_index.core.node_parser import SentenceWindowNodeParser
 from llama_index.core import PromptTemplate, get_response_synthesizer, StorageContext, VectorStoreIndex, \
     SimpleDirectoryReader, Settings
-# 在FTEmbed配置了默认的 llm 模型和 embed 模型
-from FTEmbed import finetuning_data_preparation, finetuning_embedding, eval_finetuning_embedding
 from llama_index.core.indices.query.query_transform import HyDEQueryTransform
 from llama_index.core.query_engine import TransformQueryEngine
 from llama_index.core.response_synthesizers.type import ResponseMode
@@ -33,7 +35,7 @@ config = dotenv_values(".env")
 # 设置参数
 with_hyde = False  # 是否采用假设文档
 persist_dir = "store"  # 向量存储地址
-with_hybrid_search = True  # 是否采用混合检索
+with_hybrid_search = False  # 是否采用混合检索
 # 5选2
 top_k = 5
 top_k_rerank = 2
@@ -42,7 +44,7 @@ response_mode = ResponseMode.SIMPLE_SUMMARIZE  # RAG架构，最佳实践为为T
 with_query_classification = False  # 是否对输入的问题进行分类
 with_rerank = True  # 是否采用重排序
 with_local_llm = False  # 是否采用本地基于Ollama的大模型
-with_Finetuning_embedding = True  # 是否微调嵌入模型
+with_Finetuning_embedding = False  # 是否微调嵌入模型
 with_Finetuning_embedding_eval = False  # 是否测评微调嵌入模型的命中率
 
 
@@ -52,6 +54,8 @@ query_str = "In the text, which lady did Fang Hongjian kiss on the ship, and und
 
 # 加载嵌入模型
 if with_Finetuning_embedding:
+    # 在FTEmbed配置了默认的 llm 模型和 embed 模型
+    from FTEmbed import finetuning_data_preparation, finetuning_embedding, eval_finetuning_embedding
     # 微调需要开启VPN
     finetuning_data_preparation(all_data=["data/testdata.txt"], llm=Settings.llm, verbose=False,
                                 train_dataset_dir="ft_data/train_dataset.json",
@@ -68,6 +72,7 @@ if with_Finetuning_embedding:
                                   model_name="ft-bge-large-en-v1.5")
 else:
     Settings.embed_model = HuggingFaceEmbedding(
+        # model_name="/mnt/workspace/modelscope/BAAI/bge-large-en-v1.5",
         model_name="BAAI/bge-large-en-v1.5",
         cache_folder="/home/chester/.cache/huggingface/hub/",
         embed_batch_size=128,
@@ -89,6 +94,11 @@ else:
 
 # load data(是否采用混合检索)
 if with_hybrid_search:
+    # 下载 sparse embedding model
+    # hf download Qdrant/Splade_PP_en_v1
+    # 然后制定 fastembed 的缓存目录为 hf的缓存目录
+    #os.environ['FASTEMBED_CACHE_PATH'] = '/home/chester/.cache/huggingface/hub'
+    # 不再尝试了，qrant相关llama_index的关于模型下载的代码写得非常糟糕。
     index, nodes = load_hybrid_data(input_file=["data/testdata.txt"], persist_dir="hybrid_Store")
 else:
     index, nodes = load_txt_data(input_file=["data/testdata.txt"], persist_dir="hybrid_Store",

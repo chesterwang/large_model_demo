@@ -5,6 +5,8 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "accelerate>=1.11.0",
+    "datasets>=4.4.1",
     "modelscope>=1.31.0",
     "sentence-transformers>=5.1.2",
     "torch>=2.8.0",
