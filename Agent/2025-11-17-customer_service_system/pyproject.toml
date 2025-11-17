@@ -1,0 +1,17 @@
+[project]
+name = "2025-11-17-customer-service-system"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "dotenv>=0.9.9",
+    "langchain-openai>=1.0.3",
+    "streamlit>=1.51.0",
+    "streamlit-smart-text-input>=1.0.9",
+]
+
+[[tool.uv.index]]
+url = "http://mirrors.aliyun.com/pypi/simple"
+#url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+default = true
