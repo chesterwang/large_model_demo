@@ -35,7 +35,8 @@ class TeachingStrategyAgent:
         - estimated_duration
         - difficulty_level
         """
-        return json.loads(self.llm.invoke(prompt).content.strip())
+        response = self.llm.invoke(prompt)
+        return json.loads(response.content.replace('\n','').replace('```json','').replace('```','').strip())
 
     def evaluate_activity_effectiveness(self, activity: Dict[str, Any], user_feedback: Dict[str, Any]) -> Dict[str, Any]:
         prompt = f"""
@@ -54,7 +55,8 @@ class TeachingStrategyAgent:
 
         Return your evaluation as a JSON object with these sections as keys.
         """
-        return json.loads(self.llm.invoke(prompt).content)
+        response = self.llm.invoke(prompt)
+        return json.loads(response.content.replace('\n','').replace('```json','').replace('```','').strip())
 
 from learning_assistant import LearningProgressTracker, AdaptiveLearningPathGenerator, PersonalizedLearningAssistant
 
@@ -62,6 +64,7 @@ class MultiStrategyLearningAssistant(PersonalizedLearningAssistant):
     def __init__(self, llm:ChatOpenAI):
         super().__init__(llm)
         self.teaching_strategies = [
+            TeachingStrategyAgent(llm, "General", "A balanced approach combining various teaching methods"),
             TeachingStrategyAgent(llm, "Visual Learning", "Emphasizes visual aids, diagrams, and graphical representations"),
             TeachingStrategyAgent(llm, "Hands-on Learning", "Focuses on practical exercises and real-world applications"),
             TeachingStrategyAgent(llm, "Collaborative Learning", "Encourages group work and peer-to-peer learning"),
@@ -93,13 +96,17 @@ class MultiStrategyLearningAssistant(PersonalizedLearningAssistant):
         Select the most appropriate teaching strategy from the following options:
         {', '.join([strategy.strategy_name for strategy in self.teaching_strategies])}
 
-        Return only the name of the selected strategy as a string.
+        Return only the name of the selected strategy.
         """
         selected_strategy_name = self.llm.invoke(prompt).content.strip()
         return next(strategy for strategy in self.teaching_strategies if strategy.strategy_name == selected_strategy_name)
 
     def provide_learning_feedback(self, user_id: str, activity: Dict[str, Any], user_feedback: Dict[str, Any]) -> Dict[str, Any]:
-        strategy = next(s for s in self.teaching_strategies if s.strategy_name == activity.get('strategy', ''))
+        valid_strategy = [s for s in self.teaching_strategies if s.strategy_name == activity.get('activity_type', '')]
+        if not valid_strategy:
+            logging.warning(f"No valid teaching strategy found for activity type: {activity.get('activity_type', '')}. Using General strategy.")
+            valid_strategy = self.teaching_strategies[:1]
+        strategy = valid_strategy[0]
         evaluation = strategy.evaluate_activity_effectiveness(activity, user_feedback)
         self.progress_tracker.record_learning_activity(user_id, {**activity, "feedback": user_feedback, "evaluation": evaluation})
         return evaluation
@@ -114,13 +121,13 @@ def run_multi_strategy_learning_assistant_simulation():
     # 开始学习会话
     session = multi_strategy_assistant.start_learning_session(user_id, learning_goals)
     print("Initial Learning Session:")
-    print(json.dumps(session, indent=2))
+    print(json.dumps(session, indent=2,ensure_ascii=False))
 
     # 获取并完成几个学习活动
     for _ in range(3):
         activity = multi_strategy_assistant.get_next_activity(user_id)
         print(f"\nNext Activity:")
-        print(json.dumps(activity, indent=2))
+        print(json.dumps(activity, indent=2,ensure_ascii=False))
 
         # 模拟用户反馈
         user_feedback = {
@@ -133,12 +140,12 @@ def run_multi_strategy_learning_assistant_simulation():
 
         feedback = multi_strategy_assistant.provide_learning_feedback(user_id, activity, user_feedback)
         print("\nActivity Feedback and Evaluation:")
-        print(json.dumps(feedback, indent=2))
+        print(json.dumps(feedback, indent=2,ensure_ascii=False))
 
     # 获取学习建议
     recommendations = multi_strategy_assistant.provide_learning_recommendations(user_id)
     print("\nPersonalized Learning Recommendations:")
-    print(json.dumps(recommendations, indent=2))
+    print(json.dumps(recommendations, indent=2,ensure_ascii=False))
 
 
 if __name__ == "__main__":

@@ -124,7 +124,7 @@ def run_personalized_learning_assistant_simulation():
     # 开始学习会话
     session = learning_assistant.start_learning_session(user_id, learning_goals)
     print("Initial Learning Session:")
-    print(json.dumps(session, indent=2))
+    print(json.dumps(session, indent=2,ensure_ascii=False))
 
     # 模拟完成几个学习活动
     activities = [
@@ -136,17 +136,17 @@ def run_personalized_learning_assistant_simulation():
     for activity in activities:
         result = learning_assistant.complete_learning_activity(user_id, activity)
         print(f"\nCompleted Activity: {activity['topic']}")
-        print(json.dumps(result, indent=2))
+        print(json.dumps(result, indent=2,ensure_ascii=False))
 
     # 获取下一个建议的活动
     next_activity = learning_assistant.get_next_activity(user_id)
     print("\nNext Recommended Activity:")
-    print(json.dumps(next_activity, indent=2))
+    print(json.dumps(next_activity, indent=2,ensure_ascii=False))
 
     # 获取学习建议
     recommendations = learning_assistant.provide_learning_recommendations(user_id)
     print("\nPersonalized Learning Recommendations:")
-    print(json.dumps(recommendations, indent=2))
+    print(json.dumps(recommendations, indent=2,ensure_ascii=False))
 
 
 if __name__ == "__main__":
