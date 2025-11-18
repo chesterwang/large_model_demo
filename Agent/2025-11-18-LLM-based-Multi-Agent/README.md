@@ -51,3 +51,6 @@
 3. **调配资源处理紧急事件**：
     1. 定义城市的可用资源，在处理应急事件的时候，对于生成的处理决策，从中提取需要的资源及其数量，然后从可用资源中扣除需求数量，从而完成紧急事件的处理。
 
+## 项目参考
+
+- 项目参考  [LLM-based-Multi-Agent-System-Architecture-Design-and-Project-Code-Practice/9 案例研究与最佳实践.md at main · AIGeniusInstitute/LLM-based-Multi-Agent-System-Architecture-Design-and-Project-Code-Practice](https://github.com/AIGeniusInstitute/LLM-based-Multi-Agent-System-Architecture-Design-and-Project-Code-Practice/blob/main/9%20%E6%A1%88%E4%BE%8B%E7%A0%94%E7%A9%B6%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5.md#95-%E6%99%BA%E8%83%BD%E5%9F%8E%E5%B8%82%E7%AE%A1%E7%90%86%E5%B9%B3%E5%8F%B0)
