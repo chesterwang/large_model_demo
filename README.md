@@ -1,5 +1,5 @@
 
-项目文档
+大模型开发项目实践
 
 1. RAG项目
     1. [项目1 若干RAG小项目](RAG/RAG-Level-01/P01-RAG-Projects/README.md)
