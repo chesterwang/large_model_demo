@@ -6,9 +6,16 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "agno>=2.3.4",
+    "aiosqlite>=0.21.0",
     "ddgs>=9.9.1",
     "dotenv>=0.9.9",
+    "fastapi>=0.122.0",
+    "google-genai>=1.52.0",
+    "lxml-html-clean>=0.4.3",
+    "newspaper4k>=0.9.4.1",
     "openai>=2.8.1",
+    "sqlalchemy>=2.0.44",
+    "uvicorn>=0.38.0",
 ]
 
 [[tool.uv.index]]
